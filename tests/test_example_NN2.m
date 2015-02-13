@@ -29,16 +29,16 @@ close all;
 
 % train_x = double(train_x) / 255;
 % test_x  = double(test_x)  / 255;
-train_x = training;
-train_y = [group_train==-1 group_train==1];
-test_x = sample;
-test_y  = [group_sample==-1 group_sample==1];
+% train_x = ta;
+% train_y = [group_train==-1 group_train==1];
+% test_x = sa;
+% test_y  = [group_sample==-1 group_sample==1];
 % train_x = [train_x;test_x];
 % train_y = [train_y;test_y];
 
 % normalize
-[train_x, mu, sigma] = zscore(train_x);
-test_x = normalize(test_x, mu, sigma);
+% [train_x, mu, sigma] = zscore(train_x);
+% test_x = normalize(test_x, mu, sigma);
 % all_x = normalize(images, mu, sigma);
 % all_y = full(sparse(labels, 1:length(labels), 1))';
 clear nn;
@@ -102,18 +102,54 @@ clear nn;
 % cv.FileStorage('weight.yml',S);
 
 %% ex5 plotting functionality
+
 rand('state',0)
-nn = nnsetup([4096 100 10 2]);
-opts.numepochs         = 30;            %  Number of full sweeps through data
-nn.activation_function = 'ReLU';
-nn.output              = 'softmax';    %  use softmax output
-opts.batchsize         = 100;         %  Take a mean gradient step over this many samples
-opts.plot              = 1;            %  enable plotting
+nn = nnsetup([784 700 700 500 500 300 300 150 150 10]);
+
+% rand('state',0)
+% ae = nnsetup([2900 1000 2900]);
+% opts.numepochs         = 100;            %  Number of full sweeps through data
+% ae.activation_function = 'linear';
+% ae.output              = 'linear';    %  use softmax output
+% opts.batchsize         = 100;         %  Take a mean gradient step over this many samples
+% opts.plot              = 1;            %  enable plotting
 % nn.nonSparsityPenalty = 0.1;
-nn.dropoutFraction   = 0.5;
+% ae.dropoutFraction   = 0.5;
 % nn.inputZeroMaskedFraction          = 0.6; 
 
-nn = nntrain(nn, train_x, train_y, opts);
+% ae = nntrain(ae, train_x, train_x, opts);
+
+% aeW1 = ae.W{1};
+
+% rand('state',0)
+% ae = nnsetup([8192 600 50 8192]);
+% ae.W{1} = aeW1;
+% opts.numepochs         = 3;            %  Number of full sweeps through data
+% ae.activation_function = 'sigm';
+% ae.output              = 'sigm';    %  use softmax output
+% opts.batchsize         = 100;         %  Take a mean gradient step over this many samples
+% opts.plot              = 1;            %  enable plotting
+% nn.nonSparsityPenalty = 0.1;
+% % ae.dropoutFraction   = 0.5;
+% % nn.inputZeroMaskedFraction          = 0.6; 
+
+% ae = nntrain(ae, train_x, train_x, opts);
+
+% nn.W{1} = ae.W{1};
+% nn.W{2} = ae.W{2};
+
+opts.numepochs         = 100;            %  Number of full sweeps through data
+nn.activation_function = 'ReLU';
+nn.output              = 'softmax';    %  use softmax output
+opts.batchsize         = 200;         %  Take a mean gradient step over this many samples
+opts.plot              = 1;            %  enable plotting
+nn.learningRate = 0.02;
+nn.weightPenaltyL2 = 0.0005;
+% nn.nonSparsityPenalty = 0.1;
+nn.dropoutFraction   = 0.4;
+% nn.inputZeroMaskedFraction          = 0.6; 
+
+nn = nntrain(nn, train_x, train_y, opts,test_x,test_y);
 
 [er, bad] = nntest(nn, test_x, test_y);
 disp(['rate: ', num2str((1-er)*100) '%']);

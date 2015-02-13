@@ -19,4 +19,7 @@ function nn = nnapplygrads(nn)
             
         nn.W{i} = nn.W{i} - dW;
     end
+    da = nn.learningRate * nn.da;
+    nn.va = nn.momentum*nn.va + da;
+    nn.ra = nn.ra - nn.va;
 end

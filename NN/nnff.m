@@ -18,16 +18,17 @@ function nn = nnff(nn, x, y)
             case 'tanh_opt'
                 nn.a{i} = tanh_opt(nn.a{i - 1} * nn.W{i - 1}');
             case 'ReLU'
-                nn.a{i} = max(nn.a{i - 1} * nn.W{i - 1}', 0);
+                MM = nn.a{i - 1} * nn.W{i - 1}';
+                nn.a{i} = max(MM, 0) + nn.ra(i-1) * min(MM, 0);
+            case 'linear'
+                nn.a{i} = nn.a{i - 1} * nn.W{i - 1}';
         end
         
         %dropout
-        if(nn.dropoutFraction > 0)
-            if(nn.testing)
-                nn.a{i} = nn.a{i}.*(1 - nn.dropoutFraction);
-            else
+        if(nn.dropoutFraction > 0&&i>=n-3)
+            if(~nn.testing)
                 nn.dropOutMask{i} = (rand(size(nn.a{i}))>nn.dropoutFraction);
-                nn.a{i} = nn.a{i}.*nn.dropOutMask{i};
+                nn.a{i} = nn.a{i}.*nn.dropOutMask{i} / (1 - nn.dropoutFraction);
             end
         end
         
