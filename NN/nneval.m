@@ -9,12 +9,14 @@ loss.train.e(end + 1) = nn.L;
 
 % validation performance
 if nargin == 6
+    nn.testing = 1;
     nn                    = nnff(nn, val_x, val_y);
+    nn.testing = 0;
     loss.val.e(end + 1)   = nn.L;
 end
 
 %calc misclassification rate if softmax
-if strcmp(nn.output,'softmax')
+if strcmp(nn.output,'softmax')||strcmp(nn.output,'hinge')
     [er_train, ~]               = nntest(nn, train_x, train_y);
     loss.train.e_frac(end+1)    = er_train;
     

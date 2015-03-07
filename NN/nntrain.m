@@ -36,7 +36,10 @@ L = zeros(numepochs*numbatches,1);
 n = 1;
 for i = 1 : numepochs
     tic;
-    
+    for j = 2 : nn.n
+        nn.mean_sigma2{j-1} = 0;
+        nn.mean_mu{j-1} = 0;
+    end;
     kk = randperm(m);
     for l = 1 : numbatches
         batch_x = train_x(kk((l - 1) * batchsize + 1 : l * batchsize), :);
@@ -53,17 +56,32 @@ for i = 1 : numepochs
         nn = nnapplygrads(nn);
         
         L(n) = nn.L;
+        for j = 2 : nn.n
+            nn.mean_sigma2{j-1} = nn.mean_sigma2{j-1} + nn.sigma2{j-1};
+            nn.mean_mu{j-1} = nn.mean_mu{j-1} + nn.mu{j-1};
+        end;
         
         n = n + 1;
         if mod(l,10)==0
             fprintf('epoch:%d iteration:%d/%d\n',i,l,numbatches);
+            gradientNorm = [];
+            for ll = 1:nn.n-1
+                gradientNorm = [gradientNorm ' ' num2str(norm(nn.dW{ll}(:,2:end)))];
+            end;
+            disp(gradientNorm);
         end;
         if mod(l,100)==0
-            disp(nn.ra);
+            disp([nn.ra mean(nn.gamma{2}) mean(nn.beta{2})]);
         end;
     end
     
+    for j = 2 : nn.n
+        nn.mean_sigma2{j-1} = nn.mean_sigma2{j-1} / (numbatches - 1);
+        nn.mean_mu{j-1} = nn.mean_mu{j-1} / numbatches;
+    end;
+    
     t = toc;
+    
 
     if opts.validation == 1
         loss = nneval(nn, loss, train_x, train_y, val_x, val_y);

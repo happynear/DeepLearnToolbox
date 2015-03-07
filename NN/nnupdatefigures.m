@@ -10,7 +10,7 @@ if i > 1 %dont plot first point, its only a point
     end
     
     %create data for plots
-    if strcmp(nn.output,'softmax')
+    if strcmp(nn.output,'softmax')||strcmp(nn.output,'hinge')
         plot_x       = x_ax';
         plot_ye      = L.train.e';
         plot_yfrac   = L.train.e_frac';
@@ -28,13 +28,13 @@ if i > 1 %dont plot first point, its only a point
     
     
     %add classification error on validation data if present
-    if opts.validation == 1 && strcmp(nn.output,'softmax')
+    if opts.validation == 1 && (strcmp(nn.output,'softmax')||strcmp(nn.output,'hinge'))
         plot_yfrac   = [plot_yfrac, L.val.e_frac'];        
     end
     
 %    plotting
     figure(fhandle);   
-    if strcmp(nn.output,'softmax')  %also plot classification error
+    if strcmp(nn.output,'softmax')||strcmp(nn.output,'hinge')  %also plot classification error
                 
         p1 = subplot(1,2,1);
         plot(plot_x,plot_ye);
