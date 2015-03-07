@@ -36,6 +36,7 @@ function nn = nnsetup(architecture)
         nn.sigma2{i-1} = ones(1,nn.size(i));
         nn.mu{i-1} = zeros(1,nn.size(i));
         nn.vBN{i-1} = zeros(1,nn.size(i) * 2);
+        nn.rBN{i-1} = zeros(1,nn.size(i) * 2);
         nn.mean_sigma2{i-1} = zeros(1,nn.size(i));
         nn.mean_mu{i-1} = zeros(1,nn.size(i));
         

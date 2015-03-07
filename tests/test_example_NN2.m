@@ -149,12 +149,13 @@ nn = nnsetup([784 500 300 10]);%400 400 400 200 200 200 200 200      1000 1000 8
 % nn.W{1}(1)=0.55;nn.W{1}(311)=0.5;nn.W{1}(312)=-0.5;
 opts.numepochs         = 20;            %  Number of full sweeps through data
 nn.activation_function = 'ReLU';
-nn.output              = 'softmax';    %  use softmax output
+nn.output              = 'hinge';    %  use softmax output
 nn.hinge_norm          = 1;
 opts.batchsize         = 200;         %  Take a mean gradient step over this many samples
 opts.plot              = 1;            %  enable plotting
+% nn.useBatchNormalization            = 0;            % 
 % nn.momentum                         = 0;
-nn.learningRate = 0.0001;
+nn.learningRate = 0.0004;
 % nn.weightPenaltyL2 = 0.0005;
 % nn.nonSparsityPenalty = 0.01;
 % nn.dropoutFraction   = 0.5;
