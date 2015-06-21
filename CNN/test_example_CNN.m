@@ -23,8 +23,11 @@ rand('state',0)
 clear cnn;
 cnn.layers = {
     struct('type', 'i') %input layer
-    struct('type', 'c', 'outputmaps', 20, 'kernelsize', 9, 'activation', 'ReLU') %convolution layer
-    struct('type', 's', 'scale', 2, 'method', 's') %sub sampling layer 'm':maxpooling; 'a':average pooling; 's':stochastic pooling
+    struct('type', 'c', 'outputmaps', 20, 'kernelsize', 5, 'activation', 'ReLU') %convolution layer
+    struct('type', 's', 'scale', 2, 'method', 'm') %sub sampling layer 'm':maxpooling; 'a':average pooling; 's':stochastic pooling
+    struct('type', 'c', 'outputmaps', 20, 'kernelsize', 5, 'activation', 'ReLU') %convolution layer
+    struct('type', 's', 'scale', 2, 'method', 'm') %sub sampling layer 'm':maxpooling; 'a':average pooling; 's':stochastic pooling
+%     struct('type', 'c', 'outputmaps', 20, 'kernelsize', 2, 'activation', 'ReLU') %convolution layer
 %     struct('type', 'c', 'outputmaps', 20, 'kernelsize', 5, 'activation', 'ReLU') %convolution layer
 %     struct('type', 's', 'scale', 2, 'method', 'm') %subsampling layer
     struct('type','o','objective','softmax');
@@ -37,7 +40,7 @@ cnn.layers = {
 %     struct('type', 's', 'scale', 2, 'method', 'm') %subsampling layer
 %     struct('type','o','objective','softmax');
 % };
-debug =true;
+debug =false;
 if debug
     opts.alpha = 1;
     opts.batchsize = 10;
@@ -56,9 +59,10 @@ opts.momentum = 0.95;
 opts.momIncrease = 20;
 cnn.iter = 1;
 cnn.testing = false;
-cnn.dropoutFraction = 0.5;
+cnn.dropoutFraction = 0;
 
 cnn = cnnsetup(cnn, train_x, train_y);
+% cnn = cnnff(cnn,train_x(:,:,1:1000));
 cnn = cnntrain(cnn, train_x, train_y, opts);
 
 [er, bad] = cnntest(cnn, test_x, test_y);
